@@ -1,0 +1,14 @@
+mvn -f pom.xml -DoutputDirectory=jars dependency:copy-dependencies
+
+
+aws s3 mb s3://hoge --endpoint-url http://localstack:4566
+export PATH=$PATH:/usr/local/spark-3.0.1-bin-hadoop3.2/bin/
+export SPARK_CONF_DIR=/root/conf
+
+df = spark.createDataFrame([(1,'hoge'),(2,'piyo')], ('id', 'name'))
+df.write.mode('overwrite').format('parquet').option('compression', 'snappy').save('s3://hoge/')
+df.write.mode('overwrite').format('parquet').save('hoge/')
+
+val seq = Seq((1, "hoge"), (2,"piyo"))
+val df = seq.toDF()
+df.write.mode("overwrite").format("parquet").save("s3://hoge/")
